@@ -95,8 +95,15 @@ jobs:
         hdiutil attach vulkansdk-macos-1.3.250.1.dmg
         sudo /Volumes/VulkanSDK/InstallVulkan.app/Contents/MacOS/InstallVulkan --root $GITHUB_WORKSPACE/vulkansdk-macos-1.3.250.1 --accept-licenses --default-answer --confirm-command install
         hdiutil detach /Volumes/VulkanSDK
+    - name: install opencv
+      run: |
+        brew update
+        # install opencv 4.8.1
+        wget https://raw.githubusercontent.com/Homebrew/homebrew-core/b23e845c1c254a6ef6deaaeb1f20836ce6098f4f/Formula/o/opencv.rb -O opencv.rb
+        brew install --build-from-source opencv.rb
     - name: build-x86_64
       run: |
+        export OpenCV_DIR=/usr/local/Cellar/opencv/4.8.1/lib/cmake/opencv4
         export VULKAN_SDK=$GITHUB_WORKSPACE/vulkansdk-macos-1.3.250.1/macOS
         mkdir build-x86_64 && cd build-x86_64
         cmake -DUSE_STATIC_MOLTENVK=ON -DCMAKE_OSX_ARCHITECTURES="x86_64" \
