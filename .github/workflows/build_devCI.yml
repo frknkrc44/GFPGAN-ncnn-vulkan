@@ -98,12 +98,12 @@ jobs:
     - name: install opencv
       run: |
         brew update
-        # install opencv 4.8.1
-        wget https://raw.githubusercontent.com/Homebrew/homebrew-core/b23e845c1c254a6ef6deaaeb1f20836ce6098f4f/Formula/o/opencv.rb -O opencv.rb
-        brew install --build-from-source opencv.rb
+        brew upgrade
+        brew install opencv@4
     - name: build-x86_64
       run: |
-        export OpenCV_DIR=/usr/local/Cellar/opencv/4.8.1/lib/cmake/opencv4
+        export OCV_VERSION=$(ls /usr/local/Cellar/opencv | tail -n1)
+        export OpenCV_DIR=/usr/local/Cellar/opencv/$OCV_VERSION/lib/cmake/opencv4
         export VULKAN_SDK=$GITHUB_WORKSPACE/vulkansdk-macos-1.3.250.1/macOS
         mkdir build-x86_64 && cd build-x86_64
         cmake -DUSE_STATIC_MOLTENVK=ON -DCMAKE_OSX_ARCHITECTURES="x86_64" \
