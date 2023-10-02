@@ -102,6 +102,9 @@ jobs:
         brew install opencv@4 libomp
     - name: build-x86_64
       run: |
+        export LIBOMP_VERSION=$(ls /usr/local/Cellar/libomp | tail -n1)
+        export LIBOMP_DIR=/usr/local/Cellar/libomp/$LIBOMP_VERSION
+        export LIBOMP_LIB=$LIBOMP_DIR/lib/libomp.dylib
         export OCV_VERSION=$(ls /usr/local/Cellar/opencv | tail -n1)
         export OpenCV_DIR=/usr/local/Cellar/opencv/$OCV_VERSION/lib/cmake/opencv4
         export VULKAN_SDK=$GITHUB_WORKSPACE/vulkansdk-macos-1.3.250.1/macOS
@@ -110,10 +113,18 @@ jobs:
             -DVulkan_INCLUDE_DIR=$GITHUB_WORKSPACE/vulkansdk-macos-1.3.250.1/MoltenVK/include \
             -DVulkan_LIBRARY=$GITHUB_WORKSPACE/vulkansdk-macos-1.3.250.1/MoltenVK/dylib/macOS/libMoltenVK.dylib \
             -DNCNN_VULKAN=ON -DNCNN_BUILD_TOOLS=OFF -DNCNN_BUILD_EXAMPLES=OFF \
+            -DOpenMP_libomp_LIBRARY=$LIBOMP_LIB \
+            -DOpenMP_C_LIB_NAMES=libomp \
+            -DOpenMP_C_FLAGS="-Xpreprocessor -fopenmp $LIBOMP_LIB -I$LIBOMP_DIR/include" \
+            -DOpenMP_CXX_LIB_NAMES=libomp \
+            -DOpenMP_CXX_FLAGS="-Xpreprocessor -fopenmp $LIBOMP_LIB -I$LIBOMP_DIR/include" \
             ../src
         cmake --build . -j 3
     - name: build-arm64
       run: |
+        export LIBOMP_VERSION=$(ls /usr/local/Cellar/libomp | tail -n1)
+        export LIBOMP_DIR=/usr/local/Cellar/libomp/$LIBOMP_VERSION
+        export LIBOMP_LIB=$LIBOMP_DIR/lib/libomp.dylib
         export OCV_VERSION=$(ls /usr/local/Cellar/opencv | tail -n1)
         export OpenCV_DIR=/usr/local/Cellar/opencv/$OCV_VERSION/lib/cmake/opencv4
         export VULKAN_SDK=$GITHUB_WORKSPACE/vulkansdk-macos-1.3.250.1/macOS
@@ -122,5 +133,10 @@ jobs:
             -DVulkan_INCLUDE_DIR=$GITHUB_WORKSPACE/vulkansdk-macos-1.3.250.1/MoltenVK/include \
             -DVulkan_LIBRARY=$GITHUB_WORKSPACE/vulkansdk-macos-1.3.250.1/MoltenVK/dylib/macOS/libMoltenVK.dylib \
             -DNCNN_VULKAN=ON -DNCNN_BUILD_TOOLS=OFF -DNCNN_BUILD_EXAMPLES=OFF \
+            -DOpenMP_libomp_LIBRARY=$LIBOMP_LIB \
+            -DOpenMP_C_LIB_NAMES=libomp \
+            -DOpenMP_C_FLAGS="-Xpreprocessor -fopenmp $LIBOMP_LIB -I$LIBOMP_DIR/include" \
+            -DOpenMP_CXX_LIB_NAMES=libomp \
+            -DOpenMP_CXX_FLAGS="-Xpreprocessor -fopenmp $LIBOMP_LIB -I$LIBOMP_DIR/include" \
             ../src
         cmake --build . -j 3
